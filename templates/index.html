@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>Fantasy Character Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>Fantasy Character Creator</h1>
+
+<form method="POST">
+    <label>Meno postavy:</label>
+    <input type="text" name="meno" required>
+
+    <br><br>
+
+    <label>Pohlavie:</label>
+    <select name="pohlavie">
+        <option>Muž</option>
+        <option>Žena</option>
+    </select>
+
+    <br><br>
+    <input type="hidden" name="action" value="create">
+
+    <button type="submit">Vytvoriť postavu</button>
+</form>
+
+
+{% if postava %}
+ <div class="character-card">
+    <div class="avatar">
+        {{ postava.obrazok }}
+    </div>
+
+    <h2>{{ postava.meno }}</h2>
+
+    <p><strong>Pohlavie:</strong> {{ postava.pohlavie }}</p>
+    <p><strong>Level:</strong> {{ postava.level }}</p>
+     <p><strong>🏆 Hodnosť:</strong> {{ postava.hodnost }}</p>
+     <p><strong>💰 Zlato:</strong> {{ postava.zlato }}</p>
+<p><strong>⭐ XP:</strong> {{ postava.xp }}/100</p>
+     <p><strong>❤️ HP:</strong> {{ postava.hp }}/{{ postava.max_hp }}</p>
+     <div class="bar">
+    <div class="fill hp-fill"></div>
+</div>
+</div>
+{% if postava.hra_skoncila %}
+<div class="game-over">
+    <h2>🏆 Hra dokončená!</h2>
+    <p>{{ postava.vysledok_boja }}</p>
+</div>
+{% endif %}
+     <h3>🎒 Inventár</h3>
+
+<ul>
+{% for predmet in postava.inventar %}
+    <li>{{ predmet }}</li>
+{% endfor %}
+</ul>
+    <p><strong>Rasa:</strong> {{ postava.rasa }}</p>
+    <p><strong>Trieda:</strong> {{ postava.trieda }}</p>
+    <p><strong>Bonus triedy:</strong></p>
+
+{% if postava.trieda == "Bojovník" %}
+<p>+20 Sila</p>
+
+{% elif postava.trieda == "Mág" %}
+<p>+20 Inteligencia</p>
+
+{% elif postava.trieda == "Lukostrelec" %}
+<p>+20 Obratnosť</p>
+
+{% elif postava.trieda == "Assassin" %}
+<p>+15 Obratnosť, +10 Sila</p>
+
+{% elif postava.trieda == "Alchymista" %}
+<p>+10 Inteligencia</p>
+
+{% endif %}
+    <p><strong>Zbraň:</strong> {{ postava.zbran }}</p>
+    <p><strong>Vzácnosť:</strong> <span style="color: {{ postava.farba_vzacnosti }};">{{ postava.vzacnost }}</span></p>
+    <h3>Príbeh postavy</h3>
+<p>{{ postava.pribeh }}</p>
+     <h3>⚔️ Aréna</h3>
+
+<div class="arena">
+    <div class="fighter hero">
+        <div class="fighter-icon">{{ postava.obrazok }}</div>
+        <p>{{ postava.meno }}</p>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <div class="fighter monster">
+        <div class="fighter-icon">👹</div>
+        <p>{{ postava.monster }}</p>
+    </div>
+</div>
+     <h3>Posledný boj</h3>
+
+{% if postava.vysledok_boja %}
+<div class="battle-log">
+    {{ postava.vysledok_boja }}
+</div>
+{% endif %}
+
+<p><strong>Nepriateľ:</strong> {{ postava.monster }}</p>
+
+<p><strong>HP nepriateľa:</strong> {{ postava.monster_hp }}</p>
+<p><strong>Útok nepriateľa:</strong> {{ postava.monster_utok }}</p>
+
+<p><strong>Výsledok:</strong> {{ postava.vysledok_boja }}</p>
+     <p><strong>⚔️ Útok:</strong> {{ postava.utok_hrdinu }}</p>
+<p><strong>🛡️ Obrana:</strong> {{ postava.obrana_hrdinu }}</p>
+    <h3>Štatistiky</h3>
+
+    <p>Sila: {{ postava.sila }}</p>
+    <div class="bar">
+      <div class="fill" style="width: {{ postava.sila }}%;"></div>
+    </div>
+
+    <p>Obratnosť: {{ postava.obratnost }}</p>
+    <div class="bar">
+        <div class="fill" style="width: {{ postava.obratnost }}%;"></div>
+    </div>
+
+    <p>Inteligencia: {{ postava.inteligencia }}</p>
+    <div class="bar">
+        <div class="fill" style="width: {{ postava.inteligencia }}%;"></div>
+    </div>
+{% if not postava.hra_skoncila %}
+<form method="POST">
+    <button type="submit" name="action" value="attack">⚔️ Útok</button>
+    <button type="submit" name="action" value="defend">🛡️ Obrana</button>
+    <button type="submit" name="action" value="heal">🧪 Elixír</button>
+    <button type="submit" name="action" value="run">🏃 Útek</button>
+</form>
+{% endif %}
+</div>
+{% endif %}
+</body>
+</html>
